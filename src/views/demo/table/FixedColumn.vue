@@ -33,6 +33,9 @@
   import { demoListApi } from '/@/api/demo/table';
   // import { getToken } from '/@/utils/auth';
 
+  // 2024-03-05 Q2
+  // props로 받은걸 여기서 처리한다음 저 BasicTable 에 내려주고싶음 어찌보면 props drilling 이긴하네
+
   // const { data } = defineProps<{ data?: { [key: string]: any } }>();
   // console.log('?==>??', data);
   const columns: BasicColumn[] = [

@@ -10,6 +10,9 @@
   // import { getToken } from '/@/utils/auth';
   const { t } = useI18n();
 
+  // 2024-03-05 Q1
+  // 여기서 데이터를 받은다음에 저 위에 FixedColumn으로 props를 내려주고
+
   // const token = getToken();
   // console.log('is token right? =>', token);
   // const res = await fetch('https://research-dev.ssokdak.kr/api/v1/admin/schedule/4/applicants', {
