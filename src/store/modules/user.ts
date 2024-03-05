@@ -7,7 +7,7 @@ import { PageEnum } from '/@/enums/pageEnum';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import { GetUserInfoModel, LoginParams } from '/@/api/sys/model/userModel';
-import { doLogout, getUserInfo, loginApi } from '/@/api/sys/user';
+import { doLogout } from '/@/api/sys/user';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { router } from '/@/router';
@@ -58,6 +58,7 @@ export const useUserStore = defineStore({
   },
   actions: {
     setToken(info: string | undefined) {
+      console.log('setToken info', info);
       this.token = info ? info : ''; // for null or undefined value
       setAuthCache(TOKEN_KEY, info);
     },
@@ -89,22 +90,74 @@ export const useUserStore = defineStore({
       },
     ): Promise<GetUserInfoModel | null> {
       try {
-        const { goHome = true, mode, ...loginParams } = params;
-        const data = await loginApi(loginParams, mode);
-        const { token } = data;
+        const { goHome = true, ...loginParams } = params;
+        // const data = await loginApi(loginParams, mode);
+        const data = await fetch('https://research-dev.ssokdak.kr/api/v1/admin/auth/login', {
+          method: 'POST',
+          body: JSON.stringify(loginParams),
+          headers: { 'Content-Type': 'application/json' },
+        }).then(async (res) => {
+          return await res.json();
+        });
 
+        console.log('before token', data);
+        const { accessToken: token } = data;
         // save token
+        console.log('token', token);
         this.setToken(token);
         return this.afterLoginAction(goHome);
       } catch (error) {
         return Promise.reject(error);
       }
     },
+    // async login(
+    //   params: LoginParams & {
+    //     goHome?: boolean;
+    //     mode?: ErrorMessageMode;
+    //   },
+    // ): Promise<GetUserInfoModel | null> {
+    //   try {
+    //     const { goHome = true, mode, ...loginParams } = params;
+    //     const data = await loginApi(
+    //       { username: loginParams.email, password: loginParams.password },
+    //       mode,
+    //     );
+    //     const { token } = data;
+
+    //     // save token
+    //     this.setToken(token);
+    //     return this.afterLoginAction(goHome);
+    //   } catch (error) {
+    //     return Promise.reject(error);
+    //   }
+    // },
     async afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
       if (!this.getToken) return null;
       // get user info
-      const userInfo = await this.getUserInfoAction();
+      // const userInfo = await this.getUserInfoAction();
 
+      // roles: RoleInfo[];
+      // // 用户id
+      // userId: string | number;
+      // // 用户名
+      // username: string;
+      // // 真实名字
+      // realName: string;
+      // // 头像
+      // avatar: string;
+      // // 介绍
+      // desc?: string;
+
+      const userInfo = {
+        roles: [{ roleName: 'RESEARCHER', value: '연구원' }],
+        username: 'test@naver.com',
+        homePath: '/user/index',
+        userId: 'test@naver.com',
+        realName: 'nextjs',
+        avatar: '',
+      };
+
+      console.log('afterLoginAction userInfo', userInfo);
       const sessionTimeout = this.sessionTimeout;
       if (sessionTimeout) {
         this.setSessionTimeout(false);
@@ -124,7 +177,16 @@ export const useUserStore = defineStore({
     },
     async getUserInfoAction(): Promise<UserInfo | null> {
       if (!this.getToken) return null;
-      const userInfo = await getUserInfo();
+      // const userInfo = await getUserInfo();
+
+      const userInfo = {
+        roles: [{ roleName: 'RESEARCHER', value: '연구원' }],
+        username: 'test@naver.com',
+        homePath: '/user/index',
+        userId: 'test@naver.com',
+        realName: 'nextjs',
+        avatar: '',
+      };
       const { roles = [] } = userInfo;
       if (isArray(roles)) {
         const roleList = roles.map((item) => item.value) as RoleEnum[];

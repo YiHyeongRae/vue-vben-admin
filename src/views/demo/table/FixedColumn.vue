@@ -31,12 +31,13 @@
   import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
 
   import { demoListApi } from '/@/api/demo/table';
+  // import { getToken } from '/@/utils/auth';
   const columns: BasicColumn[] = [
     {
       title: 'ID',
       dataIndex: 'id',
       fixed: 'left',
-      width: 280,
+      width: 160,
     },
     {
       title: '姓名',
@@ -63,6 +64,19 @@
       width: 200,
     },
   ];
+  // console.log('위에서 잘 주나 ? props ?', data);
+  // const token = getToken();
+  // console.log('is token right? =>', token);
+  // const res = await fetch('https://research-dev.ssokdak.kr/api/v1/admin/schedule/4/applicants', {
+  //   method: 'GET',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     authorization: `Bearer ${token}`,
+  //   },
+  // });
+  // const applicants = await res.json();
+  // console.log('applicantns =>', applicants);
+
   export default defineComponent({
     components: { BasicTable, TableAction },
     setup() {
@@ -70,7 +84,10 @@
         title: 'TableAction组件及固定列示例',
         api: demoListApi,
         columns: columns,
-        rowSelection: { type: 'radio' },
+        rowSelection: {
+          type: 'checkbox',
+        },
+
         bordered: true,
         actionColumn: {
           width: 160,
@@ -79,12 +96,14 @@
           // slots: { customRender: 'action' },
         },
       });
+
       function handleDelete(record: Recordable) {
-        console.log('点击了删除', record);
+        console.log('handle delete record', record);
       }
       function handleOpen(record: Recordable) {
-        console.log('点击了启用', record);
+        console.log('handle open record', record);
       }
+
       return {
         registerTable,
         handleDelete,

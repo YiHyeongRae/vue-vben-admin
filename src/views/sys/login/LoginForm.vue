@@ -119,8 +119,8 @@
   const rememberMe = ref(false);
 
   const formData = reactive({
-    account: 'vben',
-    password: '123456',
+    account: 'test@naver.com',
+    password: '1234',
   });
 
   const { validForm } = useFormValid(formRef);
@@ -129,16 +129,19 @@
 
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN);
 
+  // const loginRESTAPI = "https://research-dev.ssokdak.kr/api/v1/admin/login"
   async function handleLogin() {
     const data = await validForm();
+    console.log('data가 무엇?', data);
     if (!data) return;
     try {
       loading.value = true;
       const userInfo = await userStore.login({
         password: data.password,
-        username: data.account,
+        email: data.account,
         mode: 'none', //不要默认的错误提示
       });
+      console.log('userInfo가 트루여야한다', userInfo);
       if (userInfo) {
         notification.success({
           message: t('sys.login.loginSuccessTitle'),
@@ -147,6 +150,8 @@
         });
       }
     } catch (error) {
+      console.log('userInfo가 트루가 아니라 error이다', error);
+
       createErrorModal({
         title: t('sys.api.errorTip'),
         content: (error as unknown as Error).message || t('sys.api.networkExceptionMsg'),

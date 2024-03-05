@@ -13,4 +13,5 @@ export default {
   builtIn: 'vben 빌트인',
   formDesign: '폼 디자인',
   guide: '한국어 가이드',
+  participant: '참가자 일정 관리',
 };
