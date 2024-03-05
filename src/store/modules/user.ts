@@ -92,7 +92,11 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, ...loginParams } = params;
         // const data = await loginApi(loginParams, mode);
-        const data = await fetch('https://research-dev.ssokdak.kr/api/v1/admin/auth/login', {
+
+        const SERVER_URL = import.meta.env.VITE_RESEARCH_SERVER_URL;
+        const SERVER_VERSION = import.meta.env.VITE_SERVER_VERSION;
+
+        const data = await fetch(` ${SERVER_URL}/api/${SERVER_VERSION}/admin/auth/login`, {
           method: 'POST',
           body: JSON.stringify(loginParams),
           headers: { 'Content-Type': 'application/json' },

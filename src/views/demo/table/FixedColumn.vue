@@ -33,6 +33,7 @@
 
   const props = defineProps(['api']);
 
+  console.log(props.api);
   const columns = ref([] as Array<Object>);
 
   async function makeTableData() {
@@ -43,7 +44,6 @@
         dataIndex: key,
         width: 200,
       };
-      console.log('is head right?', head);
       columns.value.push(head);
     });
     return res;
