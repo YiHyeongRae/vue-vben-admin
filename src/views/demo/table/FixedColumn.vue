@@ -27,76 +27,44 @@
   </div>
 </template>
 <script lang="ts" setup>
-  // import { defineComponent } from 'vue';
-  import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
+  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import _ from 'lodash-es';
+  import { ref } from 'vue';
 
-  import { demoListApi } from '/@/api/demo/table';
-  // import { getToken } from '/@/utils/auth';
+  const props = defineProps(['api']);
 
-  // 2024-03-05 Q2
-  // props로 받은걸 여기서 처리한다음 저 BasicTable 에 내려주고싶음 어찌보면 props drilling 이긴하네
+  const columns = ref([] as Array<Object>);
 
-  // const { data } = defineProps<{ data?: { [key: string]: any } }>();
-  // console.log('?==>??', data);
-  const columns: BasicColumn[] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      fixed: 'left',
-      width: 160,
-    },
-    {
-      title: '姓名',
-      dataIndex: 'name',
-      width: 260,
-    },
-    {
-      title: '地址',
-      dataIndex: 'address',
-    },
-    {
-      title: '编号',
-      dataIndex: 'no',
-      width: 300,
-    },
-    {
-      title: '开始时间',
-      width: 200,
-      dataIndex: 'beginTime',
-    },
-    {
-      title: '结束时间',
-      dataIndex: 'endTime',
-      width: 200,
-    },
-  ];
-  // console.log('위에서 잘 주나 ? props ?', data);
-  // const token = getToken();
-  // console.log('is token right? =>', token);
-  // const res = await fetch('https://research-dev.ssokdak.kr/api/v1/admin/schedule/4/applicants', {
-  //   method: 'GET',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     authorization: `Bearer ${token}`,
-  //   },
-  // });
-  // const applicants = await res.json();
-  // console.log('applicantns =>', applicants);
+  async function makeTableData() {
+    const res = await props.api();
+    _.forEach(res[0], (_, key) => {
+      const head = {
+        title: key,
+        dataIndex: key,
+        width: 200,
+      };
+      console.log('is head right?', head);
+      columns.value.push(head);
+    });
+    return res;
+  }
+
   const [registerTable] = useTable({
-    title: 'TableAction组件及固定列示例',
-    api: demoListApi,
+    title: '연구 참여자 리스트',
+    api: makeTableData,
     columns: columns,
     rowSelection: {
       type: 'checkbox',
     },
 
     bordered: true,
-    actionColumn: {
-      width: 160,
-      title: 'Action',
-      dataIndex: 'action',
-      // slots: { customRender: 'action' },
-    },
+    // actionColumn: {
+    //   width: 160,
+    //   fixed: 'right',
+    //   title: 'Action',
+    //   dataIndex: 'action',
+    //   // slots: { customRender: 'action' },
+    // },
   });
 
   function handleDelete(record: Recordable) {
@@ -105,15 +73,4 @@
   function handleOpen(record: Recordable) {
     console.log('handle open record', record);
   }
-  // export default defineComponent({
-  //   components: { BasicTable, TableAction },
-  //   setup() {
-
-  //     return {
-  //       // registerTable,
-  //       // handleDelete,
-  //       // handleOpen,
-  //     };
-  //   },
-  // });
 </script>

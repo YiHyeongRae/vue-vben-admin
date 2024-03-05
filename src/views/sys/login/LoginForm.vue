@@ -118,15 +118,15 @@
   const loading = ref(false);
   const rememberMe = ref(false);
 
-  // const formData = reactive({
-  //   account: 'test@naver.com',
-  //   password: '1234',
-  // });
-
   const formData = reactive({
-    account: 'vben',
-    password: '123456',
+    account: 'test@naver.com',
+    password: '1234',
   });
+
+  // const formData = reactive({
+  //   account: 'vben',
+  //   password: '123456',
+  // });
 
   const { validForm } = useFormValid(formRef);
 
@@ -134,7 +134,6 @@
 
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN);
 
-  // const loginRESTAPI = "https://research-dev.ssokdak.kr/api/v1/admin/login"
   async function handleLogin() {
     const data = await validForm();
     console.log('data가 무엇?', data);
@@ -144,7 +143,7 @@
       const userInfo = await userStore.login({
         password: data.password,
         email: data.account,
-        mode: 'none', //不要默认的错误提示
+        // mode: 'none', //不要默认的错误提示
       });
       console.log('userInfo가 트루여야한다', userInfo);
       if (userInfo) {
