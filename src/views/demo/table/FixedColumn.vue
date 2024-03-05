@@ -26,12 +26,15 @@
     </BasicTable>
   </div>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
+<script lang="ts" setup>
+  // import { defineComponent } from 'vue';
   import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
 
   import { demoListApi } from '/@/api/demo/table';
   // import { getToken } from '/@/utils/auth';
+
+  // const { data } = defineProps<{ data?: { [key: string]: any } }>();
+  // console.log('?==>??', data);
   const columns: BasicColumn[] = [
     {
       title: 'ID',
@@ -76,39 +79,38 @@
   // });
   // const applicants = await res.json();
   // console.log('applicantns =>', applicants);
+  const [registerTable] = useTable({
+    title: 'TableAction组件及固定列示例',
+    api: demoListApi,
+    columns: columns,
+    rowSelection: {
+      type: 'checkbox',
+    },
 
-  export default defineComponent({
-    components: { BasicTable, TableAction },
-    setup() {
-      const [registerTable] = useTable({
-        title: 'TableAction组件及固定列示例',
-        api: demoListApi,
-        columns: columns,
-        rowSelection: {
-          type: 'checkbox',
-        },
-
-        bordered: true,
-        actionColumn: {
-          width: 160,
-          title: 'Action',
-          dataIndex: 'action',
-          // slots: { customRender: 'action' },
-        },
-      });
-
-      function handleDelete(record: Recordable) {
-        console.log('handle delete record', record);
-      }
-      function handleOpen(record: Recordable) {
-        console.log('handle open record', record);
-      }
-
-      return {
-        registerTable,
-        handleDelete,
-        handleOpen,
-      };
+    bordered: true,
+    actionColumn: {
+      width: 160,
+      title: 'Action',
+      dataIndex: 'action',
+      // slots: { customRender: 'action' },
     },
   });
+
+  function handleDelete(record: Recordable) {
+    console.log('handle delete record', record);
+  }
+  function handleOpen(record: Recordable) {
+    console.log('handle open record', record);
+  }
+  // export default defineComponent({
+  //   components: { BasicTable, TableAction },
+  //   setup() {
+
+  //     return {
+  //       // registerTable,
+  //       // handleDelete,
+  //       // handleOpen,
+  //     };
+  //   },
+  // });
 </script>
