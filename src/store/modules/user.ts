@@ -7,7 +7,7 @@ import { PageEnum } from '/@/enums/pageEnum';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import { GetUserInfoModel, LoginParams } from '/@/api/sys/model/userModel';
-import { doLogout } from '/@/api/sys/user';
+import { doLogout, loginApi } from '/@/api/sys/user';
 import { useI18n } from '/@/hooks/web/useI18n';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { router } from '/@/router';
@@ -83,33 +83,6 @@ export const useUserStore = defineStore({
     /**
      * @description: login
      */
-    async login(
-      params: LoginParams & {
-        goHome?: boolean;
-        mode?: ErrorMessageMode;
-      },
-    ): Promise<GetUserInfoModel | null> {
-      try {
-        const { goHome = true, ...loginParams } = params;
-        // const data = await loginApi(loginParams, mode);
-        const data = await fetch('https://research-dev.ssokdak.kr/api/v1/admin/auth/login', {
-          method: 'POST',
-          body: JSON.stringify(loginParams),
-          headers: { 'Content-Type': 'application/json' },
-        }).then(async (res) => {
-          return await res.json();
-        });
-
-        console.log('before token', data);
-        const { accessToken: token } = data;
-        // save token
-        console.log('token', token);
-        this.setToken(token);
-        return this.afterLoginAction(goHome);
-      } catch (error) {
-        return Promise.reject(error);
-      }
-    },
     // async login(
     //   params: LoginParams & {
     //     goHome?: boolean;
@@ -117,20 +90,47 @@ export const useUserStore = defineStore({
     //   },
     // ): Promise<GetUserInfoModel | null> {
     //   try {
-    //     const { goHome = true, mode, ...loginParams } = params;
-    //     const data = await loginApi(
-    //       { username: loginParams.email, password: loginParams.password },
-    //       mode,
-    //     );
-    //     const { token } = data;
+    //     const { goHome = true, ...loginParams } = params;
+    //     // const data = await loginApi(loginParams, mode);
+    //     const data = await fetch('https://research-dev.ssokdak.kr/api/v1/admin/auth/login', {
+    //       method: 'POST',
+    //       body: JSON.stringify(loginParams),
+    //       headers: { 'Content-Type': 'application/json' },
+    //     }).then(async (res) => {
+    //       return await res.json();
+    //     });
 
+    //     console.log('before token', data);
+    //     const { accessToken: token } = data;
     //     // save token
+    //     console.log('token', token);
     //     this.setToken(token);
     //     return this.afterLoginAction(goHome);
     //   } catch (error) {
     //     return Promise.reject(error);
     //   }
     // },
+    async login(
+      params: LoginParams & {
+        goHome?: boolean;
+        mode?: ErrorMessageMode;
+      },
+    ): Promise<GetUserInfoModel | null> {
+      try {
+        const { goHome = true, mode, ...loginParams } = params;
+        const data = await loginApi(
+          { username: loginParams.email, password: loginParams.password },
+          mode,
+        );
+        const { token } = data;
+
+        // save token
+        this.setToken(token);
+        return this.afterLoginAction(goHome);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    },
     async afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
       if (!this.getToken) return null;
       // get user info

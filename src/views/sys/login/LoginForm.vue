@@ -118,9 +118,14 @@
   const loading = ref(false);
   const rememberMe = ref(false);
 
+  // const formData = reactive({
+  //   account: 'test@naver.com',
+  //   password: '1234',
+  // });
+
   const formData = reactive({
-    account: 'test@naver.com',
-    password: '1234',
+    account: 'vben',
+    password: '123456',
   });
 
   const { validForm } = useFormValid(formRef);
